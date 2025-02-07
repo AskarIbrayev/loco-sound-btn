@@ -74,8 +74,30 @@
     const button = document.getElementById("locoSoundButton");
     const sound = document.getElementById("locoSound");
 
-    button.addEventListener('touchstart', (e) => {
-        e.preventDefault();
+    let activeTouches = new Set();
+
+    button.addEventListener("touchstart", (event) => {
+        event.preventDefault(); // Prevent default behavior (e.g., scrolling)
+        
+        for (let touch of event.changedTouches) {
+            activeTouches.add(touch.identifier);
+        }
+
+        if (activeTouches.size === 1) { // Play only when first touch starts
+            audio.currentTime = 0; // Restart sound
+            audio.play().catch(err => console.log("Audio play blocked", err));
+        }
+    });
+
+    button.addEventListener("touchend", (event) => {
+        for (let touch of event.changedTouches) {
+            activeTouches.delete(touch.identifier);
+        }
+
+        if (activeTouches.size === 0) { // Stop only when all fingers are lifted
+            audio.pause();
+            audio.currentTime = 0; // Reset sound
+        }
     });
 
     document.addEventListener('contextmenu', (e) => {
