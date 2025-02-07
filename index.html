@@ -84,8 +84,8 @@
         }
 
         if (activeTouches.size === 1) { // Play only when first touch starts
-            audio.currentTime = 0; // Restart sound
-            audio.play().catch(err => console.log("Audio play blocked", err));
+            sound.currentTime = 0; // Restart sound
+            sound.play().catch(err => console.log("Audio play blocked", err));
         }
     });
 
@@ -95,8 +95,8 @@
         }
 
         if (activeTouches.size === 0) { // Stop only when all fingers are lifted
-            audio.pause();
-            audio.currentTime = 0; // Reset sound
+            sound.pause();
+            sound.currentTime = 0; // Reset sound
         }
     });
 
