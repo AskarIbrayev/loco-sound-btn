@@ -76,18 +76,45 @@
 
     let activeTouches = new Set();
 
+    button.addEventListener("touchstart", (event) => {
+        event.preventDefault(); // Prevent default browser behavior
+    
+        if (activeTouches.size === 0) { // Allow only first touch
+            for (let touch of event.changedTouches) {
+                activeTouches.add(touch.identifier);
+            }
+        }
+        if (activeTouches.size === 1) { // Play only when first touch starts
+            button.style.transform = "translateY(8px)"; // Simulate press
+            button.style.boxShadow = "0 4px 0 #550000, 0 6px 15px rgba(0, 0, 0, 0.3)";
+            playSound()
+        }
+    });
+    
+    button.addEventListener("touchend", (event) => {
+        for (let touch of event.changedTouches) {
+            activeTouches.delete(touch.identifier);
+        }
+        if (activeTouches.size === 0) { // Stop only when all fingers are lifted
+            button.style.transform = "translateY(0)"; // Reset after release
+            button.style.boxShadow = "0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5)";
+            fadeOutSound()
+        }
+
+    });
+
     document.addEventListener('contextmenu', (e) => {
         e.preventDefault(); // Disable long press menu
     });
-
+    /*
     button.addEventListener('pointerdown', (event) => {
         event.preventDefault(); // Prevent default browser behavior
         if (activeTouches.size === 0) { // Allow only first touch
             activeTouches.add(event.pointerId);
+            button.style.transform = "translateY(8px)"; // Simulate press
+            button.style.boxShadow = "0 4px 0 #550000, 0 6px 15px rgba(0, 0, 0, 0.3)";
+            playSound()
         }
-        button.style.transform = "translateY(8px)"; // Simulate press
-        button.style.boxShadow = "0 4px 0 #550000, 0 6px 15px rgba(0, 0, 0, 0.3)";
-        playSound()
     });
 
     button.addEventListener("pointerup", (event) => {
@@ -96,7 +123,7 @@
         button.style.boxShadow = "0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5)";
         fadeOutSound()
     });
-
+    */
     function addOverlay() {
         const overlay = document.createElement("div");
         overlay.innerText = "TAP TO LOAD IN FULLSCREEN";
