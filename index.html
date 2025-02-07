@@ -67,7 +67,7 @@
     </style>
 </head>
 <body>
-<button id="fullscreen-btn">F</button>
+<button id="fullscreen-btn">X</button>
 <div class="container">
     <button id="locoSoundButton" class="big-button" type="button" aria-label="Action Button">
         <svg fill="#d9d9d9" width="100" height="100" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -78,13 +78,60 @@
 <audio id="clickSound" src="loco_sound.mp3" preload="auto"></audio>
 
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const overlay = document.createElement("div");
+        overlay.innerText = "Tap to Start";
+        overlay.style = `
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: black; color: white; display: flex;
+            align-items: center; justify-content: center; font-size: 24px;
+            z-index: 9999; cursor: pointer;
+        `;
+    
+        document.body.appendChild(overlay);
+    
+        overlay.addEventListener("click", function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.warn("Fullscreen request failed", err);
+                });
+            }
+            overlay.remove(); // Remove overlay after entering fullscreen
+        });
+    })
+    
     document.getElementById("fullscreen-btn").addEventListener("click", function () {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } else {
+        //if (!document.fullscreenElement) {
+         //   document.documentElement.requestFullscreen();
+        //} else {
+         //   document.exitFullscreen();
+        //}
+        if (document.fullscreenElement) {
             document.exitFullscreen();
+            /*
+            const overlay = document.createElement("div");
+            overlay.innerText = "Tap to Start";
+            overlay.style = `
+                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                background: black; color: white; display: flex;
+                align-items: center; justify-content: center; font-size: 24px;
+                z-index: 9999; cursor: pointer;
+            `;
+        
+            document.body.appendChild(overlay);
+            overlay.addEventListener("click", function () {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.warn("Fullscreen request failed", err);
+                    });
+                }
+                overlay.remove(); // Remove overlay after entering fullscreen
+            });
+            */
         }
+
     });
+
 
     const button = document.getElementById("locoSoundButton");
     const sound = document.getElementById("clickSound");
@@ -100,19 +147,22 @@
     button.addEventListener('pointerdown', () => {
         button.style.transform = "translateY(8px)"; // Simulate press
         button.style.boxShadow = "0 4px 0 #550000, 0 6px 15px rgba(0, 0, 0, 0.3)";
-        sound.currentTime = 0; // Restart sound
-        sound.play().catch((e) => console.error("Playback error:", e));
+        //sound.currentTime = 0; // Restart sound
+        //sound.play().catch((e) => console.error("Playback error:", e));
+        playSound()
     });
 
     button.addEventListener("pointerup", () => {
         button.style.transform = "translateY(0)"; // Reset after release
         button.style.boxShadow = "0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5)";
-        sound.pause();
+        //sound.pause();
+        fadeOutSound()
     });
     
     button.addEventListener("pointerleave", () => {
         button.style.transform = "translateY(0)"; // Reset if finger moves away
         button.style.boxShadow = "0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5)";
+        fadeOutSound()
     });
 
     let fadeOutInterval;
@@ -146,7 +196,7 @@
             }
         }, 50); // Reduce volume every 50ms for a smooth fade-out
     }
-
+/*
     button.addEventListener("mousedown", playSound);
     button.addEventListener("touchstart", playSound);
 
@@ -154,6 +204,7 @@
     button.addEventListener("mouseleave", fadeOutSound);
     button.addEventListener("touchend", fadeOutSound);
     button.addEventListener("touchcancel", fadeOutSound);
+    */
 </script>
 
 </body>
