@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loco Sound Button</title>
+    <title>Звук локомотива</title>
     <style>
         body {
             background-color: #222;
         }
         .container {
-            height: 100vh;
+            height: 95vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        #fullscreen-btn{
+        #exit-fullscreen-btn{
             background-color: #222;
         }
 
@@ -36,9 +36,6 @@
             background: radial-gradient(circle at 50% 30%, #ff4d4d, #cc0000);
             border: 5px solid #880000;
             box-shadow: 0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5);
-            font-size: 22px;
-            font-weight: bold;
-            color: white;
             cursor: pointer;
             transition: all 0.1s ease-in-out;
             display: flex;
@@ -47,27 +44,10 @@
             text-transform: uppercase;
             user-select: none;
         }
-
-        .big-button:active {
-            transform: translateY(8px);
-            box-shadow: 0 4px 0 #550000, 0 6px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .shadow {
-            position: absolute;
-            width: 220px;
-            height: 220px;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8));
-            border-radius: 50%;
-            top: 8px;
-            left: 0;
-            z-index: -1;
-        }
-
     </style>
 </head>
 <body>
-<button id="fullscreen-btn">X</button>
+<button id="exit-fullscreen-btn">X</button>
 <div class="container">
     <button id="locoSoundButton" class="big-button" type="button" aria-label="Action Button">
         <svg fill="#d9d9d9" width="100" height="100" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -75,15 +55,51 @@
         </svg>    
     </button>
 </div>
-<audio id="clickSound" src="loco_sound.mp3" preload="auto"></audio>
+<audio id="locoSound" src="loco_sound.mp3" preload="auto"></audio>
 
 <script>
+    let fadeOutInterval;
+
     document.addEventListener("DOMContentLoaded", () => {
+        addOverlay()
+    })
+
+    document.getElementById("exit-fullscreen-btn").addEventListener("click", function () {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+            addOverlay()
+        }
+    });
+
+    const button = document.getElementById("locoSoundButton");
+    const sound = document.getElementById("locoSound");
+
+    button.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+    });
+
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault(); // Disable long press menu
+    });
+
+    button.addEventListener('pointerdown', () => {
+        button.style.transform = "translateY(8px)"; // Simulate press
+        button.style.boxShadow = "0 4px 0 #550000, 0 6px 15px rgba(0, 0, 0, 0.3)";
+        playSound()
+    });
+
+    button.addEventListener("pointerup", () => {
+        button.style.transform = "translateY(0)"; // Reset after release
+        button.style.boxShadow = "0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5)";
+        fadeOutSound()
+    });
+
+    function addOverlay() {
         const overlay = document.createElement("div");
-        overlay.innerText = "Tap to Start";
+        overlay.innerText = "TAP TO LOAD IN FULLSCREEN";
         overlay.style = `
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: black; color: white; display: flex;
+            background: #222; opacity: 0.95; color: white; display: flex;
             align-items: center; justify-content: center; font-size: 24px;
             z-index: 9999; cursor: pointer;
         `;
@@ -98,82 +114,7 @@
             }
             overlay.remove(); // Remove overlay after entering fullscreen
         });
-    })
-    
-    document.getElementById("fullscreen-btn").addEventListener("click", function () {
-        //if (!document.fullscreenElement) {
-         //   document.documentElement.requestFullscreen();
-        //} else {
-         //   document.exitFullscreen();
-        //}
-        if (document.fullscreenElement) {
-            document.exitFullscreen();
-            /*
-            const overlay = document.createElement("div");
-            overlay.innerText = "Tap to Start";
-            overlay.style = `
-                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-                background: black; color: white; display: flex;
-                align-items: center; justify-content: center; font-size: 24px;
-                z-index: 9999; cursor: pointer;
-            `;
-        
-            document.body.appendChild(overlay);
-            overlay.addEventListener("click", function () {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => {
-                        console.warn("Fullscreen request failed", err);
-                    });
-                }
-                overlay.remove(); // Remove overlay after entering fullscreen
-            });
-            */
-        }
-
-    });
-
-
-    const button = document.getElementById("locoSoundButton");
-    const sound = document.getElementById("clickSound");
-
-    button.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-    });
-
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault(); // Disable long press menu
-    });
-
-    button.addEventListener('pointerdown', () => {
-        button.style.transform = "translateY(8px)"; // Simulate press
-        button.style.boxShadow = "0 4px 0 #550000, 0 6px 15px rgba(0, 0, 0, 0.3)";
-        //sound.currentTime = 0; // Restart sound
-        //sound.play().catch((e) => console.error("Playback error:", e));
-        playSound()
-    });
-
-    button.addEventListener("pointerup", () => {
-        button.style.transform = "translateY(0)"; // Reset after release
-        button.style.boxShadow = "0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5)";
-        //sound.pause();
-        fadeOutSound()
-    });
-    
-    button.addEventListener("pointerleave", () => {
-        button.style.transform = "translateY(0)"; // Reset if finger moves away
-        button.style.boxShadow = "0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5)";
-        fadeOutSound()
-    });
-
-    let fadeOutInterval;
-
-    document.addEventListener("DOMContentLoaded", () => {
-        sound.volume = 1;
-        sound.play().then(() => {
-            sound.pause();
-            sound.currentTime = 0;
-        }).catch(() => {}); // Ensures preload works without user interaction issues
-    });
+    }
 
     function playSound() {
         clearInterval(fadeOutInterval); // Stop fading if already running
@@ -196,7 +137,7 @@
             }
         }, 50); // Reduce volume every 50ms for a smooth fade-out
     }
-/*
+    /*
     button.addEventListener("mousedown", playSound);
     button.addEventListener("touchstart", playSound);
 
