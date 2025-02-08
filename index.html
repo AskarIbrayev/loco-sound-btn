@@ -15,7 +15,7 @@
             align-items: center;
         }
 
-        #exit-fullscreen-btn{
+        .control-btn{
             background-color: #222;
         }
 
@@ -47,7 +47,8 @@
     </style>
 </head>
 <body>
-<button id="exit-fullscreen-btn">X</button>
+<button id="exitFullscreenBtn" class="control-btn">X</button>
+<button id="reloadBtn" class="control-btn">RESTART</button>
 <div class="container">
     <button id="locoSoundButton" class="big-button" type="button" aria-label="Action Button">
         <svg fill="#d9d9d9" width="100" height="100" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -64,11 +65,15 @@
         addOverlay()
     })
 
-    document.getElementById("exit-fullscreen-btn").addEventListener("click", function () {
+    document.getElementById("exitFullscreenBtn").addEventListener("click", function () {
         if (document.fullscreenElement) {
             document.exitFullscreen();
             addOverlay()
         }
+    });
+
+    document.getElementById("reloadBtn").addEventListener("click", () => {
+        location.reload();
     });
 
     const button = document.getElementById("locoSoundButton");
@@ -80,24 +85,28 @@
         event.preventDefault(); // Prevent default browser behavior
     
         if (activeTouches.size === 0) { // Allow only first touch
-            for (let touch of event.changedTouches) {
-                activeTouches.add(touch.identifier);
-            }
-        }
-        if (activeTouches.size === 1) { // Play only when first touch starts
-            button.style.transform = "translateY(8px)"; // Simulate press
-            button.style.boxShadow = "0 4px 0 #550000, 0 6px 15px rgba(0, 0, 0, 0.3)";
+            pushPutton()
             playSound()
         }
+        for (let touch of event.changedTouches) {
+            activeTouches.add(touch.identifier);
+        }
+        // console.log('touchstart', activeTouches.size)
+        /*
+        if (activeTouches.size === 1) { // Play only when first touch starts
+            pushPutton()
+            playSound()
+        }
+        */
     });
     
     button.addEventListener("touchend", (event) => {
         for (let touch of event.changedTouches) {
             activeTouches.delete(touch.identifier);
+        //    console.log('touchend', activeTouches.size)
         }
         if (activeTouches.size === 0) { // Stop only when all fingers are lifted
-            button.style.transform = "translateY(0)"; // Reset after release
-            button.style.boxShadow = "0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5)";
+            releaseButton()
             fadeOutSound()
         }
 
@@ -144,6 +153,16 @@
             }
             overlay.remove(); // Remove overlay after entering fullscreen
         });
+    }
+
+    function pushPutton() {
+        button.style.transform = "translateY(8px)"; // Simulate press
+        button.style.boxShadow = "0 4px 0 #550000, 0 6px 15px rgba(0, 0, 0, 0.3)";
+    }
+
+    function releaseButton() {
+        button.style.transform = "translateY(0)"; // Reset after release
+        button.style.boxShadow = "0 8px 0 #550000, 0 12px 30px rgba(0, 0, 0, 0.5)";
     }
 
     function playSound() {
