@@ -1,7 +1,7 @@
 const CACHE_NAME = "pwa-cache-v1";
 const FILES_TO_CACHE = [
-  "/index.html",
-  "/loco_sound.mp3"
+  "/loco-sound-btn/index.html",
+  "/loco-sound-btn/loco_sound.mp3"
 ];
 
 // Install Service Worker & Cache Files
