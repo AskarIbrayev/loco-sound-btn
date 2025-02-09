@@ -61,7 +61,7 @@
 
 <script>
     if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/loco-sound-btn/service-worker.js")
+        navigator.serviceWorker.register("/service-worker.js")
             .then(() => console.log("Service Worker Registered"))
             .catch((error) => console.log("Service Worker Registration Failed:", error));
     }
@@ -78,10 +78,6 @@
             addOverlay()
         }
     });
-
-    //document.getElementById("reloadBtn").addEventListener("click", () => {
-    //    location.reload();
-    //});
 
     const button = document.getElementById("locoSoundButton");
     const sound = document.getElementById("locoSound");
